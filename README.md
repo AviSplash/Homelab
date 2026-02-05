@@ -1,8 +1,7 @@
-# Homelab
-
+# AviSplash's Homelab
 <HTML>
   <H>
-    AviSplash's Homelab 
+    Welcome to my homelab where I show off what I run at home, follow issues found and documented fixes.  
   </H>
   
 </HTML>
