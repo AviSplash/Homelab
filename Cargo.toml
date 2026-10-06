@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/skerry-core", "crates/skerry-platform"]
+members = ["crates/skerry-core", "crates/skerry-platform", "apps/skerry-cli"]
 
 
 [workspace.package]
