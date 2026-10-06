@@ -189,9 +189,7 @@ impl Desktop {
     }
 
     fn nearest_display(&self, x: f64, y: f64) -> Option<&Rect> {
-        self.displays
-            .iter()
-            .min_by(|a, b| a.distance_sq(x, y).total_cmp(&b.distance_sq(x, y)))
+        self.displays.iter().min_by(|a, b| a.distance_sq(x, y).total_cmp(&b.distance_sq(x, y)))
     }
 
     /// Clamp a point onto the closest display.
@@ -232,11 +230,8 @@ impl Desktop {
         }
         if edge.is_vertical_line() {
             let ty = (b.y as f64 + frac * b.h as f64).min((b.bottom() - 1) as f64);
-            let covering: Vec<&Rect> = self
-                .displays
-                .iter()
-                .filter(|d| ty >= d.y as f64 && ty < d.bottom() as f64)
-                .collect();
+            let covering: Vec<&Rect> =
+                self.displays.iter().filter(|d| ty >= d.y as f64 && ty < d.bottom() as f64).collect();
             let pick = |cands: &[&Rect]| -> Option<Rect> {
                 match edge {
                     Edge::Left => cands.iter().min_by_key(|d| d.x).map(|d| **d),
@@ -249,11 +244,8 @@ impl Desktop {
             (x, cy)
         } else {
             let tx = (b.x as f64 + frac * b.w as f64).min((b.right() - 1) as f64);
-            let covering: Vec<&Rect> = self
-                .displays
-                .iter()
-                .filter(|d| tx >= d.x as f64 && tx < d.right() as f64)
-                .collect();
+            let covering: Vec<&Rect> =
+                self.displays.iter().filter(|d| tx >= d.x as f64 && tx < d.right() as f64).collect();
             let d = match edge {
                 Edge::Top => covering.iter().min_by_key(|d| d.y).map(|d| **d),
                 _ => covering.iter().max_by_key(|d| d.bottom()).map(|d| **d),

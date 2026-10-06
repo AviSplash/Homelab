@@ -10,7 +10,9 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use skerry_core::config::Paths;
-use skerry_core::engine::{self, EngineEvent, EngineHandle, EngineOptions, FocusView, PairTarget, SettingsUpdate, Snapshot};
+use skerry_core::engine::{
+    self, EngineEvent, EngineHandle, EngineOptions, FocusView, PairTarget, SettingsUpdate, Snapshot,
+};
 use skerry_core::geometry::Edge;
 use skerry_core::identity::Identity;
 use std::net::SocketAddr;

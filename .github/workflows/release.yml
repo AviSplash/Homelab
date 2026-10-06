@@ -1,0 +1,103 @@
+name: Release
+
+# Push a tag like v0.1.0 to build installers for every platform and attach
+# them to a draft GitHub release.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  desktop:
+    name: Desktop app (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            os: ubuntu-22.04
+            args: ""
+          - name: Windows
+            os: windows-latest
+            args: ""
+          - name: macOS (Apple Silicon + Intel)
+            os: macos-latest
+            args: "--target universal-apple-darwin"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev patchelf
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: Swatinem/rust-cache@v2
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: apps/skerry-app
+          tauriScript: npx --yes @tauri-apps/cli@2
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          releaseName: Skerry ${{ github.ref_name }}
+          releaseBody: |
+            Download the installer for your computer below. Install Skerry on every computer you want to share a mouse and keyboard between.
+            These builds are not code-signed yet: see the README for how to open them on Windows and macOS.
+          releaseDraft: true
+          args: ${{ matrix.args }}
+
+  cli:
+    name: Command-line app (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            exe: skerry-cli
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            exe: skerry-cli.exe
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            exe: skerry-cli
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            exe: skerry-cli
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release -p skerry-cli --target ${{ matrix.target }}
+      - name: Package
+        shell: bash
+        run: |
+          name="skerry-cli-${{ github.ref_name }}-${{ matrix.target }}"
+          mkdir "$name"
+          cp "target/${{ matrix.target }}/release/${{ matrix.exe }}" README.md LICENSE "$name/"
+          if [ "${{ runner.os }}" = "Windows" ]; then 7z a "$name.zip" "$name"; else tar czf "$name.tar.gz" "$name"; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skerry-cli-${{ matrix.target }}
+          path: skerry-cli-*.*
+      - name: Attach to release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: skerry-cli-*.*

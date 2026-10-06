@@ -90,9 +90,12 @@ impl ClipContent {
 
     pub fn decode(kind: ClipKind, data: &[u8]) -> Result<ClipContent> {
         match kind {
-            ClipKind::Text => Ok(ClipContent::Text(String::from_utf8(data.to_vec()).context("clipboard text is not UTF-8")?)),
+            ClipKind::Text => {
+                Ok(ClipContent::Text(String::from_utf8(data.to_vec()).context("clipboard text is not UTF-8")?))
+            }
             ClipKind::Png => {
-                let mut dec = png::Decoder::new_with_limits(Cursor::new(data), png::Limits { bytes: 256 * 1024 * 1024 });
+                let mut dec =
+                    png::Decoder::new_with_limits(Cursor::new(data), png::Limits { bytes: 256 * 1024 * 1024 });
                 dec.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
                 let mut reader = dec.read_info()?;
                 let size = reader.output_buffer_size().context("image too large")?;
@@ -103,7 +106,9 @@ impl ClipContent {
                 let rgba = match info.color_type {
                     png::ColorType::Rgba => buf,
                     png::ColorType::Rgb => buf.chunks_exact(3).flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
-                    png::ColorType::GrayscaleAlpha => buf.chunks_exact(2).flat_map(|p| [p[0], p[0], p[0], p[1]]).collect(),
+                    png::ColorType::GrayscaleAlpha => {
+                        buf.chunks_exact(2).flat_map(|p| [p[0], p[0], p[0], p[1]]).collect()
+                    }
                     png::ColorType::Grayscale => buf.iter().flat_map(|g| [*g, *g, *g, 255]).collect(),
                     other => bail!("unsupported image format {other:?}"),
                 };

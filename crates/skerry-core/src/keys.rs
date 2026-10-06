@@ -316,11 +316,7 @@ pub fn key_from_name(name: &str) -> Option<u32> {
 }
 
 pub fn key_name(code: u32) -> String {
-    NAMES
-        .iter()
-        .find(|(_, c)| *c == code)
-        .map(|(k, _)| k.to_string())
-        .unwrap_or_else(|| format!("key{code}"))
+    NAMES.iter().find(|(_, c)| *c == code).map(|(k, _)| k.to_string()).unwrap_or_else(|| format!("key{code}"))
 }
 
 /// A key combination such as `ctrl+alt+shift+right`.

@@ -61,29 +61,62 @@ pub enum Message {
 
     // Pairing (only these are accepted before a peer is trusted).
     PairRequest,
-    PairSpake { msg: Vec<u8> },
-    PairConfirm { mac: Vec<u8> },
-    PairResult { ok: bool, reason: String },
+    PairSpake {
+        msg: Vec<u8>,
+    },
+    PairConfirm {
+        mac: Vec<u8>,
+    },
+    PairResult {
+        ok: bool,
+        reason: String,
+    },
 
     // Layout and screen description.
     Screen(ScreenInfo),
     /// "Please place me on this edge of your screen" (or remove me).
-    LayoutHint { edge: Option<Edge> },
+    LayoutHint {
+        edge: Option<Edge>,
+    },
 
     // Input, sent by the computer whose mouse and keyboard are in use.
-    Enter { x: f64, y: f64 },
+    Enter {
+        x: f64,
+        y: f64,
+    },
     Leave,
-    Motion { x: f64, y: f64 },
-    Button { button: Button, pressed: bool },
+    Motion {
+        x: f64,
+        y: f64,
+    },
+    Button {
+        button: Button,
+        pressed: bool,
+    },
     /// Scroll amounts in 1/120ths of a wheel notch. Positive y scrolls up,
     /// positive x scrolls right.
-    Scroll { x: i32, y: i32 },
-    Key { code: u32, pressed: bool },
+    Scroll {
+        x: i32,
+        y: i32,
+    },
+    Key {
+        code: u32,
+        pressed: bool,
+    },
 
     // Clipboard transfer, sent in chunks so input is never stuck behind it.
-    ClipBegin { id: u64, kind: ClipKind, len: u64 },
-    ClipData { id: u64, data: Vec<u8> },
-    ClipEnd { id: u64 },
+    ClipBegin {
+        id: u64,
+        kind: ClipKind,
+        len: u64,
+    },
+    ClipData {
+        id: u64,
+        data: Vec<u8>,
+    },
+    ClipEnd {
+        id: u64,
+    },
 
     Ping(u64),
     Pong(u64),

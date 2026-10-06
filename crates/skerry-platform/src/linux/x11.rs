@@ -26,8 +26,8 @@ use x11rb::protocol::randr::ConnectionExt as _;
 use x11rb::protocol::xinput::{self, ConnectionExt as _};
 use x11rb::protocol::xkb::{self, ConnectionExt as _};
 use x11rb::protocol::xproto::{
-    self, ClientMessageEvent, ConnectionExt as _, CreateWindowAux, EventMask, GrabMode, GrabStatus, KeyButMask, ModMask,
-    Window, WindowClass,
+    self, ClientMessageEvent, ConnectionExt as _, CreateWindowAux, EventMask, GrabMode, GrabStatus, KeyButMask,
+    ModMask, Window, WindowClass,
 };
 use x11rb::protocol::xtest::ConnectionExt as _;
 use x11rb::protocol::Event;
@@ -340,7 +340,8 @@ impl Worker {
     }
 
     fn grab(&self) -> Result<bool> {
-        let mask = xinput::XIEventMask::RAW_MOTION | xinput::XIEventMask::BUTTON_PRESS | xinput::XIEventMask::BUTTON_RELEASE;
+        let mask =
+            xinput::XIEventMask::RAW_MOTION | xinput::XIEventMask::BUTTON_PRESS | xinput::XIEventMask::BUTTON_RELEASE;
         let p = self
             .conn
             .xinput_xi_grab_device(

@@ -7,7 +7,7 @@ members = ["crates/skerry-core", "crates/skerry-platform", "apps/skerry-cli", "a
 version = "0.1.0"
 edition = "2021"
 license = "GPL-3.0-or-later"
-repository = "https://github.com/avisplash/skerry"
+repository = "https://github.com/AviSplash/skerry"
 rust-version = "1.80"
 
 [profile.release]

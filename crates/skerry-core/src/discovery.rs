@@ -57,7 +57,13 @@ pub struct Discovery {
 }
 
 impl Discovery {
-    pub fn start(id: &str, name: &str, os: OsKind, port: u16, tx: UnboundedSender<DiscoveryEvent>) -> Result<Discovery> {
+    pub fn start(
+        id: &str,
+        name: &str,
+        os: OsKind,
+        port: u16,
+        tx: UnboundedSender<DiscoveryEvent>,
+    ) -> Result<Discovery> {
         let daemon = ServiceDaemon::new()?;
         let me = Discovery { daemon, id: id.to_string(), os, port, fullname: Mutex::new(None) };
         me.advertise(name)?;

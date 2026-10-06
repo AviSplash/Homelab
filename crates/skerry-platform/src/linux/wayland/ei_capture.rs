@@ -244,7 +244,10 @@ impl State<'_> {
 async fn run(shared: Arc<Shared>, mut cmds: mpsc::UnboundedReceiver<Cmd>) -> anyhow::Result<()> {
     let ic = InputCapture::new().await?;
     let (session, _caps) = ic
-        .create_session(None, CreateSessionOptions::default().set_capabilities(Capabilities::Keyboard | Capabilities::Pointer))
+        .create_session(
+            None,
+            CreateSessionOptions::default().set_capabilities(Capabilities::Keyboard | Capabilities::Pointer),
+        )
         .await?;
     let fd = ic.connect_to_eis(&session, ConnectToEISOptions::default()).await?;
     let context = ei::Context::new(UnixStream::from(fd))?;

@@ -5,7 +5,9 @@
 use serde::Serialize;
 use skerry_core::clipboard::NullClipboard;
 use skerry_core::config::Paths;
-use skerry_core::engine::{self, Backends, EngineEvent, EngineHandle, EngineOptions, FocusView, PairTarget, SettingsUpdate, Snapshot};
+use skerry_core::engine::{
+    self, Backends, EngineEvent, EngineHandle, EngineOptions, FocusView, PairTarget, SettingsUpdate, Snapshot,
+};
 use skerry_core::geometry::Edge;
 use skerry_core::input::{BackendStatus, NullCapture, NullEmulation};
 use skerry_core::keys::OsKind;
@@ -193,7 +195,10 @@ fn main() {
                     _ => {}
                 })
                 .on_tray_icon_event(|tray, ev| {
-                    if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = ev {
+                    if let TrayIconEvent::Click {
+                        button: MouseButton::Left, button_state: MouseButtonState::Up, ..
+                    } = ev
+                    {
                         show_main(tray.app_handle());
                     }
                 });

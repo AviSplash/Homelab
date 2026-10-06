@@ -114,7 +114,10 @@ pub fn to_evdev(scan: u32, extended: bool, vk: u32) -> Option<u32> {
 }
 
 pub enum WinKey {
-    Scan { scan: u16, extended: bool },
+    Scan {
+        scan: u16,
+        extended: bool,
+    },
     /// Keys that must be sent by virtual key code.
     Vk(u16),
 }

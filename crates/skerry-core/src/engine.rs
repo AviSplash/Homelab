@@ -523,7 +523,9 @@ async fn establish(stream: TcpStream, private: &[u8; 32], initiator: bool, hello
     let msg = tokio::time::timeout(Duration::from_secs(10), session.recv()).await.context("no hello")??;
     match msg {
         Message::Hello(h) if h.protocol == PROTOCOL_VERSION => Ok((session, h)),
-        Message::Hello(h) => bail!("peer speaks protocol {} (we speak {PROTOCOL_VERSION}); update Skerry on both computers", h.protocol),
+        Message::Hello(h) => {
+            bail!("peer speaks protocol {} (we speak {PROTOCOL_VERSION}); update Skerry on both computers", h.protocol)
+        }
         _ => bail!("peer did not say hello"),
     }
 }
@@ -542,7 +544,8 @@ fn resolve(target: &str, default_port: u16) -> Result<Vec<SocketAddr>> {
     } else {
         format!("{t}:{default_port}")
     };
-    let mut addrs: Vec<SocketAddr> = with_port.to_socket_addrs().with_context(|| format!("cannot resolve {t}"))?.collect();
+    let mut addrs: Vec<SocketAddr> =
+        with_port.to_socket_addrs().with_context(|| format!("cannot resolve {t}"))?.collect();
     addrs.sort_by_key(|a| !a.is_ipv4());
     if addrs.is_empty() {
         bail!("cannot resolve {t}");
@@ -881,12 +884,7 @@ impl Engine {
         let Some(conn) = self.conns.remove(&conn_id) else { return };
         conn.handle.send(Message::Bye);
         self.incoming_clip.remove(&conn_id);
-        let failed: Vec<u64> = self
-            .pairings
-            .iter()
-            .filter(|(_, p)| p.conn == Some(conn_id))
-            .map(|(s, _)| *s)
-            .collect();
+        let failed: Vec<u64> = self.pairings.iter().filter(|(_, p)| p.conn == Some(conn_id)).map(|(s, _)| *s).collect();
         for s in failed {
             self.finish_pairing(s, false, "The other computer disconnected.".into());
         }
@@ -914,7 +912,11 @@ impl Engine {
         if self.cfg.peer(pid).is_some() {
             self.reconnect.insert(
                 pid.to_string(),
-                Reconnect { in_progress: false, next_at: Instant::now() + Duration::from_secs(1), backoff: Duration::from_secs(1) },
+                Reconnect {
+                    in_progress: false,
+                    next_at: Instant::now() + Duration::from_secs(1),
+                    backoff: Duration::from_secs(1),
+                },
             );
         }
         self.update_edges();
@@ -922,7 +924,11 @@ impl Engine {
     }
 
     fn screen_info(&self) -> ScreenInfo {
-        ScreenInfo { displays: self.advertised.clone(), neighbors: self.cfg.layout.as_array(), available: self.cfg.enabled }
+        ScreenInfo {
+            displays: self.advertised.clone(),
+            neighbors: self.cfg.layout.as_array(),
+            available: self.cfg.enabled,
+        }
     }
 
     fn broadcast_screen(&self) {
@@ -936,10 +942,7 @@ impl Engine {
 
     fn update_edges(&mut self) {
         let edges: EdgeSet = if self.cfg.enabled && self.cfg.edge_switching && self.controlled_by.is_none() {
-            Edge::ALL
-                .into_iter()
-                .filter(|e| self.cfg.layout.get(*e).is_some_and(|id| self.peer_ready(id)))
-                .collect()
+            Edge::ALL.into_iter().filter(|e| self.cfg.layout.get(*e).is_some_and(|id| self.peer_ready(id))).collect()
         } else {
             EdgeSet::empty()
         };
@@ -957,7 +960,10 @@ impl Engine {
         let authed = conn.authed;
         let pid = conn.peer_id.clone();
 
-        if matches!(msg, Message::PairRequest | Message::PairSpake { .. } | Message::PairConfirm { .. } | Message::PairResult { .. }) {
+        if matches!(
+            msg,
+            Message::PairRequest | Message::PairSpake { .. } | Message::PairConfirm { .. } | Message::PairResult { .. }
+        ) {
             self.on_pairing_message(conn_id, msg);
             return;
         }
@@ -1004,7 +1010,8 @@ impl Engine {
             Message::ClipBegin { id, kind, len } => {
                 let len = len as usize;
                 if len <= MAX_CLIPBOARD_BYTES && self.cfg.clipboard_sync {
-                    self.incoming_clip.insert(conn_id, IncomingClip { id, kind, len, buf: Vec::with_capacity(len.min(1 << 20)) });
+                    self.incoming_clip
+                        .insert(conn_id, IncomingClip { id, kind, len, buf: Vec::with_capacity(len.min(1 << 20)) });
                 }
             }
             Message::ClipData { id, data } => {
@@ -1034,7 +1041,10 @@ impl Engine {
             Message::Ping(t) => self.conns[&conn_id].handle.send(Message::Pong(t)),
             Message::Pong(_) | Message::Hello(_) => {}
             Message::Bye => self.close_conn(conn_id),
-            Message::PairRequest | Message::PairSpake { .. } | Message::PairConfirm { .. } | Message::PairResult { .. } => {
+            Message::PairRequest
+            | Message::PairSpake { .. }
+            | Message::PairConfirm { .. }
+            | Message::PairResult { .. } => {
                 unreachable!("handled above")
             }
         }
@@ -1392,7 +1402,13 @@ impl Engine {
                 let code = pairing::generate_code();
                 self.pairings.insert(
                     s,
-                    Pairing { role: Role::Responder, conn: Some(conn_id), peer_name: peer_name.clone(), stage: PairStage::ShowCode(code.clone()), created: now },
+                    Pairing {
+                        role: Role::Responder,
+                        conn: Some(conn_id),
+                        peer_name: peer_name.clone(),
+                        stage: PairStage::ShowCode(code.clone()),
+                        created: now,
+                    },
                 );
                 self.notice(format!("{peer_name} wants to pair. Enter code {code} on {peer_name}."));
                 self.dirty = true;
@@ -1534,7 +1550,10 @@ impl Engine {
                 if self.cfg.peer(id).is_some() && self.online.contains_key(id) {
                     bail!("Already paired with this computer.");
                 }
-                let d = self.discovered.get(id).ok_or_else(|| anyhow!("That computer is no longer visible on the network."))?;
+                let d = self
+                    .discovered
+                    .get(id)
+                    .ok_or_else(|| anyhow!("That computer is no longer visible on the network."))?;
                 (d.addrs.iter().map(|a| a.to_string()).collect::<Vec<_>>(), d.name.clone())
             }
             PairTarget::Address(a) => {
@@ -1547,7 +1566,13 @@ impl Engine {
         let s = self.next_id();
         self.pairings.insert(
             s,
-            Pairing { role: Role::Initiator, conn: None, peer_name: name, stage: PairStage::Connecting, created: Instant::now() },
+            Pairing {
+                role: Role::Initiator,
+                conn: None,
+                peer_name: name,
+                stage: PairStage::Connecting,
+                created: Instant::now(),
+            },
         );
         self.dial(targets, Intent::Pair(s));
         self.dirty = true;

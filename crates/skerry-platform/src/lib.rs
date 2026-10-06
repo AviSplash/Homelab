@@ -54,7 +54,12 @@ pub async fn create(events: mpsc::UnboundedSender<CaptureEvent>) -> Result<Platf
     #[cfg(target_os = "macos")]
     let (capture, emulation, screen, description) = macos::create(events)?;
     #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
-    let (capture, emulation, screen, description): (Box<dyn Capture>, Box<dyn Emulation>, Box<dyn ScreenSource>, String) = {
+    let (capture, emulation, screen, description): (
+        Box<dyn Capture>,
+        Box<dyn Emulation>,
+        Box<dyn ScreenSource>,
+        String,
+    ) = {
         let _ = events;
         anyhow::bail!("this operating system is not supported")
     };

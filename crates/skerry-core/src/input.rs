@@ -15,14 +15,30 @@ pub enum CaptureEvent {
     /// The cursor was pushed through an enabled edge at `(x, y)` (capture
     /// coordinates). The backend has started capturing: local input is now
     /// hidden from this computer and reported below until `release`.
-    Begin { edge: Edge, x: f64, y: f64 },
+    Begin {
+        edge: Edge,
+        x: f64,
+        y: f64,
+    },
     /// Relative pointer movement while capturing.
-    Motion { dx: f64, dy: f64 },
-    Button { button: Button, pressed: bool },
+    Motion {
+        dx: f64,
+        dy: f64,
+    },
+    Button {
+        button: Button,
+        pressed: bool,
+    },
     /// Scroll in 1/120ths of a notch; positive y = up, positive x = right.
-    Scroll { x: i32, y: i32 },
+    Scroll {
+        x: i32,
+        y: i32,
+    },
     /// Key in evdev code space, while capturing.
-    Key { code: u32, pressed: bool },
+    Key {
+        code: u32,
+        pressed: bool,
+    },
     /// A configured hotkey was pressed (captured or not).
     Hotkey(HotkeyAction),
     /// The backend's health changed (e.g. a permission is missing).

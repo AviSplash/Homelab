@@ -11,7 +11,9 @@ use std::os::fd::{AsFd, FromRawFd, OwnedFd};
 use wayland_client::protocol::{wl_keyboard, wl_output, wl_pointer, wl_registry, wl_seat};
 use wayland_client::{delegate_noop, Connection, Dispatch, EventQueue, QueueHandle, WEnum};
 use wayland_protocols::xdg::xdg_output::zv1::client::{zxdg_output_manager_v1, zxdg_output_v1};
-use wayland_protocols_misc::zwp_virtual_keyboard_v1::client::{zwp_virtual_keyboard_manager_v1, zwp_virtual_keyboard_v1};
+use wayland_protocols_misc::zwp_virtual_keyboard_v1::client::{
+    zwp_virtual_keyboard_manager_v1, zwp_virtual_keyboard_v1,
+};
 use wayland_protocols_wlr::virtual_pointer::v1::client::{zwlr_virtual_pointer_manager_v1, zwlr_virtual_pointer_v1};
 
 use super::ei_emulation::button_code;
@@ -67,7 +69,14 @@ impl State {
 }
 
 impl Dispatch<wl_registry::WlRegistry, ()> for State {
-    fn event(state: &mut Self, reg: &wl_registry::WlRegistry, ev: wl_registry::Event, _: &(), _: &Connection, qh: &QueueHandle<Self>) {
+    fn event(
+        state: &mut Self,
+        reg: &wl_registry::WlRegistry,
+        ev: wl_registry::Event,
+        _: &(),
+        _: &Connection,
+        qh: &QueueHandle<Self>,
+    ) {
         if let wl_registry::Event::Global { name, interface, version } = ev {
             match interface.as_str() {
                 "wl_seat" if state.seat.is_none() => state.seat = Some(reg.bind(name, version.min(7), qh, ())),
@@ -86,7 +95,14 @@ impl Dispatch<wl_registry::WlRegistry, ()> for State {
 }
 
 impl Dispatch<wl_seat::WlSeat, ()> for State {
-    fn event(state: &mut Self, seat: &wl_seat::WlSeat, ev: wl_seat::Event, _: &(), _: &Connection, qh: &QueueHandle<Self>) {
+    fn event(
+        state: &mut Self,
+        seat: &wl_seat::WlSeat,
+        ev: wl_seat::Event,
+        _: &(),
+        _: &Connection,
+        qh: &QueueHandle<Self>,
+    ) {
         if let wl_seat::Event::Capabilities { capabilities: WEnum::Value(caps) } = ev {
             if caps.contains(wl_seat::Capability::Keyboard) && state.keyboard.is_none() {
                 state.keyboard = Some(seat.get_keyboard(qh, ()));
@@ -96,7 +112,14 @@ impl Dispatch<wl_seat::WlSeat, ()> for State {
 }
 
 impl Dispatch<wl_keyboard::WlKeyboard, ()> for State {
-    fn event(state: &mut Self, _: &wl_keyboard::WlKeyboard, ev: wl_keyboard::Event, _: &(), _: &Connection, _: &QueueHandle<Self>) {
+    fn event(
+        state: &mut Self,
+        _: &wl_keyboard::WlKeyboard,
+        ev: wl_keyboard::Event,
+        _: &(),
+        _: &Connection,
+        _: &QueueHandle<Self>,
+    ) {
         if let wl_keyboard::Event::Keymap { format: WEnum::Value(wl_keyboard::KeymapFormat::XkbV1), fd, size } = ev {
             state.keymap = Some((fd, size));
         }
@@ -104,14 +127,23 @@ impl Dispatch<wl_keyboard::WlKeyboard, ()> for State {
 }
 
 impl Dispatch<wl_output::WlOutput, usize> for State {
-    fn event(state: &mut Self, _: &wl_output::WlOutput, ev: wl_output::Event, idx: &usize, _: &Connection, _: &QueueHandle<Self>) {
+    fn event(
+        state: &mut Self,
+        _: &wl_output::WlOutput,
+        ev: wl_output::Event,
+        idx: &usize,
+        _: &Connection,
+        _: &QueueHandle<Self>,
+    ) {
         let Some((_, g)) = state.outputs.get_mut(*idx) else { return };
         match ev {
             wl_output::Event::Geometry { x, y, .. } => {
                 g.x = x;
                 g.y = y;
             }
-            wl_output::Event::Mode { flags: WEnum::Value(f), width, height, .. } if f.contains(wl_output::Mode::Current) => {
+            wl_output::Event::Mode { flags: WEnum::Value(f), width, height, .. }
+                if f.contains(wl_output::Mode::Current) =>
+            {
                 g.w = width;
                 g.h = height;
             }
@@ -121,7 +153,14 @@ impl Dispatch<wl_output::WlOutput, usize> for State {
 }
 
 impl Dispatch<zxdg_output_v1::ZxdgOutputV1, usize> for State {
-    fn event(state: &mut Self, _: &zxdg_output_v1::ZxdgOutputV1, ev: zxdg_output_v1::Event, idx: &usize, _: &Connection, _: &QueueHandle<Self>) {
+    fn event(
+        state: &mut Self,
+        _: &zxdg_output_v1::ZxdgOutputV1,
+        ev: zxdg_output_v1::Event,
+        idx: &usize,
+        _: &Connection,
+        _: &QueueHandle<Self>,
+    ) {
         let Some((_, g)) = state.outputs.get_mut(*idx) else { return };
         let mut l = g.logical.unwrap_or((g.x, g.y, g.w, g.h));
         match ev {

@@ -154,10 +154,7 @@ impl Default for Config {
             swap_cmd_ctrl: true,
             edge_switching: true,
             block_switch_while_dragging: true,
-            hotkeys: default_hotkeys()
-                .into_iter()
-                .map(|(keys, action)| HotkeyBinding { keys, action })
-                .collect(),
+            hotkeys: default_hotkeys().into_iter().map(|(keys, action)| HotkeyBinding { keys, action }).collect(),
             layout: Layout::default(),
             peers: Vec::new(),
             manual_peers: Vec::new(),

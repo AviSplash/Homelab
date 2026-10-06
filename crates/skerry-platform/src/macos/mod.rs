@@ -91,7 +91,12 @@ pub fn displays() -> Vec<Rect> {
         .into_iter()
         .map(|id| {
             let b = CGDisplay::new(id).bounds();
-            Rect::new(b.origin.x.round() as i32, b.origin.y.round() as i32, b.size.width.round() as i32, b.size.height.round() as i32)
+            Rect::new(
+                b.origin.x.round() as i32,
+                b.origin.y.round() as i32,
+                b.size.width.round() as i32,
+                b.size.height.round() as i32,
+            )
         })
         .filter(|r| !r.is_empty())
         .collect()
@@ -139,7 +144,11 @@ impl MacCapture {
             hotkeys: Mutex::new(HotkeyMatcher::default()),
             local_keys: Mutex::new(HashSet::new()),
             tap_port: AtomicPtr::new(std::ptr::null_mut()),
-            status: Mutex::new(if trusted { BackendStatus::Ok } else { BackendStatus::NeedsPermission(PERMISSION_HINT.into()) }),
+            status: Mutex::new(if trusted {
+                BackendStatus::Ok
+            } else {
+                BackendStatus::NeedsPermission(PERMISSION_HINT.into())
+            }),
         });
         allow_background_cursor_hiding();
         let s = shared.clone();
@@ -470,7 +479,8 @@ impl MacEmulation {
     }
 
     fn mouse_event(&self, etype: CGEventType, button: CGMouseButton) -> Option<CGEvent> {
-        let ev = CGEvent::new_mouse_event(self.source.clone(), etype, CGPoint::new(self.pos.0, self.pos.1), button).ok()?;
+        let ev =
+            CGEvent::new_mouse_event(self.source.clone(), etype, CGPoint::new(self.pos.0, self.pos.1), button).ok()?;
         ev.set_flags(self.flags());
         Some(ev)
     }

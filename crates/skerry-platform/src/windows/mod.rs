@@ -19,7 +19,7 @@ mod keymap;
 use anyhow::{Context, Result};
 use skerry_core::geometry::{Desktop, EdgeSet, Rect};
 use skerry_core::input::{Capture, CaptureEvent, CaptureSender, Emulation, ScreenSource};
-use skerry_core::keys::{HotkeyMatcher, KeyVerdict, Hotkey, HotkeyAction};
+use skerry_core::keys::{Hotkey, HotkeyAction, HotkeyMatcher, KeyVerdict};
 use skerry_core::proto::Button;
 use std::cell::Cell;
 use std::collections::HashSet;
@@ -187,7 +187,8 @@ fn hook_thread(ready: std::sync::mpsc::Sender<Result<()>>) {
         let hmod: HINSTANCE = unsafe { GetModuleHandleW(None)? }.into();
         unsafe {
             SetWindowsHookExW(WH_MOUSE_LL, Some(mouse_proc), Some(hmod), 0).context("installing mouse hook")?;
-            SetWindowsHookExW(WH_KEYBOARD_LL, Some(keyboard_proc), Some(hmod), 0).context("installing keyboard hook")?;
+            SetWindowsHookExW(WH_KEYBOARD_LL, Some(keyboard_proc), Some(hmod), 0)
+                .context("installing keyboard hook")?;
         }
         match create_hider(hmod) {
             Ok(h) => HIDER.with(|c| c.set(h.0 as isize)),
@@ -269,7 +270,8 @@ fn start_grab(s: &Shared) {
     *s.park.lock().unwrap() = park;
     unsafe {
         if let Some(h) = hider() {
-            let _ = SetWindowPos(h, Some(HWND_TOPMOST), park.0 - 32, park.1 - 32, 64, 64, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            let _ =
+                SetWindowPos(h, Some(HWND_TOPMOST), park.0 - 32, park.1 - 32, 64, 64, SWP_NOACTIVATE | SWP_SHOWWINDOW);
         }
         let _ = SetCursorPos(park.0, park.1);
     }

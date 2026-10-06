@@ -51,12 +51,13 @@ where
     F: std::future::Future<Output = ()> + 'static,
 {
     let name = name.to_string();
-    let _ = std::thread::Builder::new().name(name.clone()).spawn(move || {
-        match tokio::runtime::Builder::new_current_thread().enable_all().build() {
-            Ok(rt) => rt.block_on(fut()),
-            Err(e) => tracing::error!("{name}: cannot start runtime: {e}"),
-        }
-    });
+    let _ =
+        std::thread::Builder::new().name(name.clone()).spawn(
+            move || match tokio::runtime::Builder::new_current_thread().enable_all().build() {
+                Ok(rt) => rt.block_on(fut()),
+                Err(e) => tracing::error!("{name}: cannot start runtime: {e}"),
+            },
+        );
 }
 
 /// Monotonic clock in microseconds (libei and Wayland timestamps).

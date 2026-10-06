@@ -33,7 +33,7 @@
     "shortDescription": "Share one mouse and keyboard between computers",
     "longDescription": "Skerry lets one mouse and keyboard control several Windows, macOS and Linux computers on the same network. Move the cursor off the edge of one screen and it appears on the next computer, with clipboard sharing and end-to-end encryption.",
     "license": "GPL-3.0-or-later",
-    "homepage": "https://github.com/avisplash/skerry",
+    "homepage": "https://github.com/AviSplash/skerry",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

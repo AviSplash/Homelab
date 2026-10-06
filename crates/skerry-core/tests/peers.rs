@@ -134,7 +134,15 @@ async fn pair(a: &Node, b: &Node, wrong: bool) -> (bool, String) {
     wait_for("code shown on b", || b.h.snapshot().pairings.iter().any(|p| p.stage == "show_code")).await;
     wait_for("a asks for code", || a.h.snapshot().pairings.iter().any(|p| p.stage == "enter_code")).await;
     let code = b.h.snapshot().pairings.iter().find_map(|p| p.code.clone()).unwrap();
-    let typed = if wrong { if code == "000000" { "000001".to_string() } else { "000000".to_string() } } else { code };
+    let typed = if wrong {
+        if code == "000000" {
+            "000001".to_string()
+        } else {
+            "000000".to_string()
+        }
+    } else {
+        code
+    };
     a.h.submit_code(s, &typed);
     loop {
         match tokio::time::timeout(Duration::from_secs(5), events.recv()).await.expect("pairing result").unwrap() {
@@ -183,16 +191,19 @@ async fn pair_control_type_copy_and_return() {
     a.send(CaptureEvent::Key { code: code::LEFTMETA, pressed: true });
     a.send(CaptureEvent::Key { code: code::C, pressed: true });
     a.send(CaptureEvent::Key { code: code::C, pressed: false });
-    wait_for("translated key", || b.emu_has(&Emu::Key(code::LEFTCTRL, true)) && b.emu_has(&Emu::Key(code::C, false))).await;
+    wait_for("translated key", || b.emu_has(&Emu::Key(code::LEFTCTRL, true)) && b.emu_has(&Emu::Key(code::C, false)))
+        .await;
     a.send(CaptureEvent::Button { button: Button::Left, pressed: true });
     a.send(CaptureEvent::Scroll { x: 0, y: -120 });
-    wait_for("button and scroll", || b.emu_has(&Emu::Button(Button::Left, true)) && b.emu_has(&Emu::Scroll(0, -120))).await;
+    wait_for("button and scroll", || b.emu_has(&Emu::Button(Button::Left, true)) && b.emu_has(&Emu::Scroll(0, -120)))
+        .await;
 
     // Copy something on B, then move back out through B's left edge.
     b.set_clip("copied on B");
     a.send(CaptureEvent::Motion { dx: -50.0, dy: 0.0 });
     wait_for("control returns to A", || a.cap.lock().unwrap().released.contains(&Some((1917.0, 500.0)))).await;
-    wait_for("focus local", || a.h.snapshot().focus == FocusView::Local && b.h.snapshot().focus == FocusView::Local).await;
+    wait_for("focus local", || a.h.snapshot().focus == FocusView::Local && b.h.snapshot().focus == FocusView::Local)
+        .await;
     // Keys and buttons still held on B are released (no stuck Ctrl).
     wait_for("held input released", || {
         b.emu_has(&Emu::Key(code::LEFTCTRL, false)) && b.emu_has(&Emu::Button(Button::Left, false))

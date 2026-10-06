@@ -51,7 +51,8 @@ impl Xt {
 async fn next(rx: &mut mpsc::UnboundedReceiver<CaptureEvent>, pred: impl Fn(&CaptureEvent) -> bool) -> CaptureEvent {
     let deadline = tokio::time::Instant::now() + Duration::from_secs(3);
     loop {
-        let ev = tokio::time::timeout_at(deadline, rx.recv()).await.expect("timed out waiting for capture event").unwrap();
+        let ev =
+            tokio::time::timeout_at(deadline, rx.recv()).await.expect("timed out waiting for capture event").unwrap();
         eprintln!("event: {ev:?}");
         if pred(&ev) {
             return ev;
@@ -94,9 +95,15 @@ async fn x11_capture_and_emulation() {
         _ => unreachable!(),
     }
     xt.key(code::A, true);
-    assert_eq!(next(&mut rx, |e| matches!(e, CaptureEvent::Key { .. })).await, CaptureEvent::Key { code: code::A, pressed: true });
+    assert_eq!(
+        next(&mut rx, |e| matches!(e, CaptureEvent::Key { .. })).await,
+        CaptureEvent::Key { code: code::A, pressed: true }
+    );
     xt.key(code::A, false);
-    assert_eq!(next(&mut rx, |e| matches!(e, CaptureEvent::Key { .. })).await, CaptureEvent::Key { code: code::A, pressed: false });
+    assert_eq!(
+        next(&mut rx, |e| matches!(e, CaptureEvent::Key { .. })).await,
+        CaptureEvent::Key { code: code::A, pressed: false }
+    );
     xt.button(3, true);
     assert_eq!(
         next(&mut rx, |e| matches!(e, CaptureEvent::Button { .. })).await,
@@ -105,7 +112,10 @@ async fn x11_capture_and_emulation() {
     xt.button(3, false);
     xt.button(5, true);
     xt.button(5, false);
-    assert_eq!(next(&mut rx, |e| matches!(e, CaptureEvent::Scroll { .. })).await, CaptureEvent::Scroll { x: 0, y: -120 });
+    assert_eq!(
+        next(&mut rx, |e| matches!(e, CaptureEvent::Scroll { .. })).await,
+        CaptureEvent::Scroll { x: 0, y: -120 }
+    );
 
     // Releasing warps the cursor back.
     p.capture.release(Some((1900.0, 400.0)));

@@ -14,7 +14,9 @@ use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-use ashpd::desktop::remote_desktop::{ConnectToEISOptions, DeviceType, RemoteDesktop, SelectDevicesOptions, StartOptions};
+use ashpd::desktop::remote_desktop::{
+    ConnectToEISOptions, DeviceType, RemoteDesktop, SelectDevicesOptions, StartOptions,
+};
 use ashpd::desktop::{CreateSessionOptions, PersistMode};
 
 use super::{monotonic_us, Displays};

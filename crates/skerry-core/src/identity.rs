@@ -97,11 +97,7 @@ pub fn device_id_for(public: &[u8]) -> String {
 /// A human-comparable fingerprint, e.g. `3f2a-9c41-07be-d5e0-11aa`.
 pub fn fingerprint(public: &[u8]) -> String {
     let digest = hex::encode(Sha256::digest(public));
-    digest.as_bytes()[..20]
-        .chunks(4)
-        .map(|c| std::str::from_utf8(c).unwrap())
-        .collect::<Vec<_>>()
-        .join("-")
+    digest.as_bytes()[..20].chunks(4).map(|c| std::str::from_utf8(c).unwrap()).collect::<Vec<_>>().join("-")
 }
 
 #[cfg(test)]
