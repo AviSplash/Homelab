@@ -3,6 +3,7 @@
 use anyhow::{bail, Result};
 use skerry_core::input::{Capture, CaptureSender, Emulation, ScreenSource};
 
+pub mod wayland;
 pub mod x11;
 
 type Parts = (Box<dyn Capture>, Box<dyn Emulation>, Box<dyn ScreenSource>, String);
@@ -38,7 +39,7 @@ pub async fn create(tx: CaptureSender) -> Result<Parts> {
             let screen = x11::X11Screen::new()?;
             Ok((Box::new(capture), Box::new(emulation), Box::new(screen), "X11".into()))
         }
-        Some(Session::Wayland) => bail!("Wayland support is not built yet"),
+        Some(Session::Wayland) => wayland::create(tx).await,
         None => bail!("no graphical session found (neither WAYLAND_DISPLAY nor DISPLAY is set)"),
     }
 }

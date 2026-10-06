@@ -17,6 +17,7 @@ x11rb = { version = "0.13", features = ["xtest", "xinput", "randr", "xkb", "xfix
 ashpd = { version = "0.13", default-features = false, features = ["tokio", "input_capture", "remote_desktop", "screencast"] }
 reis = { version = "0.7", features = ["tokio"] }
 futures-util = "0.3"
+libc = "0.2"
 wayland-client = "0.31"
 wayland-protocols = { version = "0.32", features = ["client", "unstable"] }
 wayland-protocols-wlr = { version = "0.3", features = ["client"] }

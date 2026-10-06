@@ -63,7 +63,7 @@ pub fn init_process() {
 pub fn create(tx: CaptureSender) -> Result<Parts> {
     init_process();
     let capture = WinCapture::new(tx)?;
-    Ok((Box::new(capture), Box::new(WinEmulation), Box::new(|| monitors()), "Windows".into()))
+    Ok((Box::new(capture), Box::new(WinEmulation), Box::new(monitors), "Windows".into()))
 }
 
 pub fn monitors() -> Vec<Rect> {
