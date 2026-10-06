@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["crates/skerry-core", "crates/skerry-platform", "apps/skerry-cli", "apps/skerry-app"]
+
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/AviSplash/skerry"
+rust-version = "1.80"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

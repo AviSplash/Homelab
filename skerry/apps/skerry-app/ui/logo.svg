@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#19A7A0"/>
+      <stop offset="1" stop-color="#0B3B5C"/>
+    </linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D5EFEC"/>
+    </linearGradient>
+  </defs>
+  <rect x="48" y="48" width="928" height="928" rx="212" fill="url(#sea)"/>
+  <!-- two skerries (screens) rising from the water -->
+  <rect x="150" y="548" width="300" height="210" rx="56" fill="url(#rock)"/>
+  <rect x="574" y="548" width="300" height="210" rx="56" fill="url(#rock)"/>
+  <!-- water line -->
+  <path d="M150 820 Q 230 790 310 820 T 470 820 T 630 820 T 790 820 T 874 812" fill="none" stroke="#7FE6DA" stroke-width="22" stroke-linecap="round" opacity="0.55"/>
+  <!-- the hop -->
+  <path d="M300 500 C 360 270, 640 250, 690 420" fill="none" stroke="#9FF2E6" stroke-width="30" stroke-linecap="round" stroke-dasharray="1 62"/>
+  <!-- cursor landing on the second skerry -->
+  <path d="M676 360 L676 590 L732 538 L772 626 L812 608 L772 522 L846 516 Z" fill="#FFFFFF" stroke="#0B3B5C" stroke-width="22" stroke-linejoin="round"/>
+</svg>
