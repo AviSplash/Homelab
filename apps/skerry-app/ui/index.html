@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skerry</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.svg" alt="" class="logo" width="28" height="28">
+      <span class="wordmark">Skerry</span>
+    </div>
+    <div class="me">
+      <input id="my-name" class="name-input" aria-label="Name of this computer" spellcheck="false" maxlength="48">
+      <span id="my-os" class="chip"></span>
+    </div>
+    <div class="spacer"></div>
+    <div id="focus-status" class="focus-status" role="status" aria-live="polite"></div>
+    <label class="switch" title="Pause or resume sharing on this computer">
+      <input type="checkbox" id="enabled">
+      <span class="track" aria-hidden="true"></span>
+      <span class="switch-label">Sharing</span>
+    </label>
+  </header>
+
+  <div id="banners" class="banners"></div>
+
+  <main class="grid">
+    <section class="card stage" aria-labelledby="arrangement-title">
+      <div class="card-head">
+        <h2 id="arrangement-title">Arrangement</h2>
+        <p class="hint">Drag a computer to the side of this screen where it sits on your desk. Then move the mouse off that edge.</p>
+      </div>
+      <div class="layout" id="layout">
+        <div class="slot" data-edge="top"></div>
+        <div class="slot" data-edge="left"></div>
+        <div class="this-computer" id="this-computer"></div>
+        <div class="slot" data-edge="right"></div>
+        <div class="slot" data-edge="bottom"></div>
+      </div>
+    </section>
+
+    <section class="card devices" aria-labelledby="computers-title">
+      <div class="card-head">
+        <h2 id="computers-title">Computers</h2>
+      </div>
+      <div id="paired-list" class="list"></div>
+      <h3 class="subhead">Nearby</h3>
+      <div id="nearby-list" class="list"></div>
+      <form id="pair-address" class="inline-form">
+        <input id="address" placeholder="Pair by address, e.g. 192.168.1.20" autocomplete="off" spellcheck="false" aria-label="Address of the computer to pair with">
+        <button type="submit" class="btn">Pair</button>
+      </form>
+    </section>
+
+    <section class="card settings" aria-labelledby="settings-title">
+      <div class="card-head"><h2 id="settings-title">Settings</h2></div>
+      <div class="toggles">
+        <label class="toggle"><input type="checkbox" data-setting="clipboard_sync"><span><strong>Share clipboard</strong><small>Copied text and images follow the cursor to the next computer.</small></span></label>
+        <label class="toggle"><input type="checkbox" data-setting="swap_cmd_ctrl"><span><strong>Swap Command and Control</strong><small>Cmd+C on a Mac keyboard copies on Windows and Linux, and vice versa.</small></span></label>
+        <label class="toggle"><input type="checkbox" data-setting="edge_switching"><span><strong>Switch at screen edges</strong><small>Turn off to switch only with hotkeys.</small></span></label>
+        <label class="toggle"><input type="checkbox" data-setting="block_switch_while_dragging"><span><strong>Don't switch while dragging</strong><small>Keeps window drags on this screen.</small></span></label>
+        <label class="toggle"><input type="checkbox" id="autostart"><span><strong>Start at login</strong><small>Skerry starts in the tray when you sign in.</small></span></label>
+      </div>
+      <details class="advanced">
+        <summary>Advanced</summary>
+        <div class="advanced-grid">
+          <div>
+            <h3 class="subhead">Hotkeys</h3>
+            <ul id="hotkeys" class="hotkeys"></ul>
+          </div>
+          <div>
+            <h3 class="subhead">Extra addresses</h3>
+            <p class="small muted">If computers can't find each other automatically (some office or guest networks block it), add their addresses here.</p>
+            <ul id="manual-list" class="manual-list"></ul>
+            <form id="manual-form" class="inline-form">
+              <input id="manual-addr" placeholder="host or host:port" autocomplete="off" spellcheck="false" aria-label="Address to always try">
+              <button class="btn secondary" type="submit">Add</button>
+            </form>
+          </div>
+          <div>
+            <h3 class="subhead">This computer</h3>
+            <dl id="about" class="about"></dl>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <dialog id="pair-dialog" class="dialog" aria-labelledby="pair-title">
+    <form method="dialog" id="pair-form">
+      <h2 id="pair-title"></h2>
+      <div id="pair-body"></div>
+      <div class="dialog-actions" id="pair-actions"></div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
